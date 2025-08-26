@@ -2,7 +2,7 @@
 // @name         MouseHunt - Favorite Setups+
 // @author       PersonalPalimpsest (asterios)
 // @namespace    https://greasyfork.org/en/users/900615-personalpalimpsest
-// @version      2.7.3
+// @version      2.8.0
 // @description  Unlimited custom favorite trap setups!
 // @grant        GM_addStyle
 // @match        http://www.mousehuntgame.com/*
@@ -1271,6 +1271,143 @@ GM_addStyle ( `
 						return false; // Prevent default link clicked behavior
 					});
 					target.prepend(m1kTab);
+
+					/* -----------Floating Islands (FI) CJS Button------------ */
+					// A flag to track if the mouse is hovering over the button
+					let isHovering = false;
+
+					// Rephrased text to minimize redundancy
+					const auraActionTexts = {
+						activate: {
+							prompt: 'How many days of aura?',
+							log: 'Activating aura for',
+						},
+						extend: {
+							prompt: 'How many days to extend the aura?',
+							log: 'Extending aura for',
+						}
+					};
+
+					// The function to handle activating or extending the aura
+					const handleAuraAction = (action) => {
+						const texts = auraActionTexts[action];
+
+						const days = parseFloat(prompt(texts.prompt));
+						if (days >= 1) {
+							console.log(`${texts.log} ${days} days.`);
+							hg.utils.UserInventory.useConvertible('jet_stream_crate_convertible', days);
+						} else {
+							console.log("Invalid number of days. Aura not activated/extended.");
+						}
+					};
+
+					// The function to update the button's appearance based on the aura's state
+					const updateAuraButtonState = () => {
+						const activeAuraIcon = document.querySelector(".QuestJetStreamAura.active");
+						const auraButton = document.getElementById('aura-button');
+
+						if (auraButton) {
+							if (!isHovering) {
+								if (activeAuraIcon) {
+									auraButton.textContent = 'JS ON';
+								} else {
+									auraButton.textContent = 'JS OFF';
+								}
+							}
+
+							if (activeAuraIcon) {
+								// Aura is ON (Blue)
+								auraButton.style.backgroundColor = 'rgb(29, 197, 247)';
+
+								auraButton.onclick = () => handleAuraAction('extend');
+							} else {
+								// Aura is OFF (Grey)
+								auraButton.style.backgroundColor = '#666666';
+
+								auraButton.onclick = () => handleAuraAction('activate');
+							}
+						}
+					};
+
+					// The function to create and insert the aura button
+					const createAuraButton = () => {
+						if (document.getElementById('aura-button')) {
+							return;
+						}
+
+						const fuelButton = document.querySelector(".floatingIslandsHUD-fuel-button");
+						if (fuelButton) {
+							const newButton = document.createElement('div');
+							newButton.id = 'aura-button';
+
+							// --- Shared static styles ---
+							newButton.style.color = 'rgb(255, 255, 255)';
+							newButton.style.opacity = '0.9';
+							newButton.style.position = 'absolute';
+							newButton.style.bottom = '-2px';
+							newButton.style.left = '50%';
+							newButton.style.transform = 'translateX(-50%)';
+							newButton.style.border = '1px solid transparent';
+							newButton.style.zIndex = '2';
+							newButton.style.padding = '0px 2px';
+							newButton.style.borderRadius = '3px';
+							newButton.style.width = '38px';
+							newButton.style.textAlign = 'center';
+							newButton.style.cursor = 'pointer';
+							newButton.style.boxShadow = '0 0 0 1px rgba(0, 0, 0, 0.3)';
+							// --- End of shared styles ---
+
+							// Set the hover events with the isHovering flag
+							newButton.onmouseover = function() {
+								isHovering = true;
+								this.style.filter = 'brightness(1.2)';
+								if (this.textContent === 'JS ON') {
+									this.textContent = 'Extend';
+								} else if (this.textContent === 'JS OFF') {
+									this.textContent = 'Activate';
+								}
+							};
+							newButton.onmouseleave = function() {
+								isHovering = false;
+								this.style.filter = 'none';
+								if (document.querySelector(".QuestJetStreamAura.active")) {
+									this.textContent = 'JS ON';
+								} else {
+									this.textContent = 'JS OFF';
+								}
+							};
+
+							fuelButton.after(newButton);
+						}
+					};
+
+					// The function that performs the DOM injections and updates
+					const performDomUpdates = () => {
+						observer.disconnect();
+
+						// --- TESTING CODE: Force the aura state to OFF ---
+						// const activeAurasForTesting = document.querySelectorAll(".QuestJetStreamAura.active");
+						// activeAurasForTesting.forEach(aura => {
+						//     aura.classList.remove('active');
+						// });
+						// ---------------------------------------------
+
+						createAuraButton();
+						updateAuraButtonState();
+						const config = { childList: true, subtree: true };
+						observer.observe(document.body, config);
+					};
+
+					// Set up a MutationObserver to watch the body for changes
+					const observer = new MutationObserver(performDomUpdates);
+
+					// The initial config to start watching the body
+					const initialConfig = { childList: true, subtree: true };
+					observer.observe(document.body, initialConfig);
+
+					// Initial call to run the injections on page load
+					performDomUpdates();
+					/* -----------Floating Islands (FI) CJS Button------------ */
 				}
 			}
 		}
