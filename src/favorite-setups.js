@@ -2,7 +2,7 @@
 // @name         MouseHunt - Favorite Setups+
 // @author       PersonalPalimpsest (asterios)
 // @namespace    https://greasyfork.org/en/users/900615-personalpalimpsest
-// @version      2.8.0
+// @version      2.8.1
 // @description  Unlimited custom favorite trap setups!
 // @grant        GM_addStyle
 // @match        http://www.mousehuntgame.com/*
@@ -291,7 +291,7 @@ GM_addStyle ( `
 		location: 6
 	};
 
-	const currentVersion = '2.7.0'; // Update this version number when you update the script
+	const currentVersion = '2.8.1'; // Update this version number when you update the script
 	const storedVersion = localStorage.getItem('ast-location-script-version');
 
 	if (!storedVersion || storedVersion !== currentVersion) {
