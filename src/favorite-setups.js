@@ -2,7 +2,7 @@
 // @name         MouseHunt - Favorite Setups+
 // @author       PersonalPalimpsest (asterios)
 // @namespace    https://greasyfork.org/en/users/900615-personalpalimpsest
-// @version      2.8.1
+// @version      2.9.0
 // @description  Unlimited custom favorite trap setups!
 // @grant        GM_addStyle
 // @match        http://www.mousehuntgame.com/*
@@ -291,7 +291,7 @@ GM_addStyle ( `
 		location: 6
 	};
 
-	const currentVersion = '2.8.1'; // Update this version number when you update the script
+	const currentVersion = '2.9.0'; // Update this version number when you update the script
 	const storedVersion = localStorage.getItem('ast-location-script-version');
 
 	if (!storedVersion || storedVersion !== currentVersion) {
@@ -744,6 +744,15 @@ GM_addStyle ( `
 					document.querySelector("#favorite-setup-input-location").value = "";
 				};
 
+				const gotdButton = document.createElement("button");
+				gotdButton.className = "button";
+				gotdButton.textContent = "GOTD";
+				gotdButton.onclick = function () {
+					hg.utils.TrapControl.armItem(1478,'trinket'); //unstable
+					hg.utils.TrapControl.armItem(3150,'base'); //LE GOTD base
+					hg.utils.TrapControl.go()
+				};
+
 				const disarmButton = document.createElement("button");
 				disarmButton.className = "button";
 				disarmButton.textContent = "Disarm";
@@ -756,6 +765,7 @@ GM_addStyle ( `
 				buttonSpan.appendChild(loadButton);
 				buttonSpan.appendChild(saveButton);
 				buttonSpan.appendChild(resetButton);
+				buttonSpan.appendChild(gotdButton);
 				buttonSpan.appendChild(disarmButton);
 
 				// Sort existing saved setups
